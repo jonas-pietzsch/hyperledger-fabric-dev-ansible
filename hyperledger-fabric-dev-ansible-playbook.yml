@@ -69,5 +69,7 @@
       shell: >
          . ~/.bashrc && npm install -g composer-cli@{{ composer_version }}
          creates=~/.nvm/versions/node/v{{ node_version }}/bin/composer
-    - name: start fabric containers
+    - name: Start fabric containers
       command: cd ~/fabric-tools && ./startFabric.sh
+    - name: Create and import PeerAdmin card
+      command: cd ~/fabric-tools && ./createPeerAdminCard.sh
