@@ -9,7 +9,7 @@
       file: path=~/fabric-tools state=directory
     - name: Adding the path in the bashrc files
       lineinfile: dest=~/.bashrc line='export FABRIC_VERSION={{ hyperledger_fabric_version }}' insertafter='EOF' state=present
-    - name: configure globally which FABRIC_VERSION to use
+    - name: Configure globally which FABRIC_VERSION to use
       shell: >
         . ~/.bashrc && echo $FABRIC_VERSION
     - name: Download fabric-dev-servers.zip
@@ -17,7 +17,7 @@
         url: "{{ fabric_dev_servers_zip_url }}"
         dest: ~/fabric-tools/fabric-dev-servers.zip
         mode: 0755
-    - name: install docker, make and requirements for nodeJs
+    - name: Install docker, make and requirements for nodeJs
       become_user: root
       yum: pkg={{item}} state=installed
       with_items:
@@ -33,7 +33,7 @@
         name: "{{ server_user }}"
         groups: docker
         append: yes
-    - name: start docker
+    - name: Start docker
       service:
         name: docker
         state: started
@@ -42,7 +42,7 @@
         src: ~/fabric-tools/fabric-dev-servers.zip
         dest: ~/fabric-tools
         remote_src: yes
-    - name: download fabric docker images by script
+    - name: Download fabric docker images by script
       shell: >
         cd ~/fabric-tools && ./downloadFabric.sh
       args:
@@ -65,7 +65,7 @@
         /bin/bash -c "source ~/.nvm/nvm.sh && nvm install v{{ node_version }} && nvm alias default v{{ node_version }}"
         creates=~/.nvm/alias
         warn=False
-    - name: install composer-cli globally
+    - name: Install composer-cli globally
       shell: >
          . ~/.bashrc && npm install -g composer-cli@{{ composer_version }}
          creates=~/.nvm/versions/node/v{{ node_version }}/bin/composer
