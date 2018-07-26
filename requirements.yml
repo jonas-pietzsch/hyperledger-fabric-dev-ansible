@@ -1,1 +1,1 @@
-- src: ansible-galaxy install udondan.ssh-reconnect
+- src: udondan.ssh-reconnect
