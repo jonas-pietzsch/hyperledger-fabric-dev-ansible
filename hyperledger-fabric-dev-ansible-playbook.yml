@@ -33,6 +33,8 @@
         name: "{{ server_user }}"
         groups: docker
         append: yes
+      notify:
+        - Kill own ssh connections
     - name: Start docker
       service:
         name: docker
@@ -44,7 +46,8 @@
         remote_src: yes
     - name: Download fabric docker images by script
       shell: >
-        cd ~/fabric-tools && ./downloadFabric.sh
+        cd ~/fabric-tools && ./downloadFabric.sh && touch ~/downloaded-images
+        creates=~/downloaded-images
       args:
         executable: /bin/bash
     - name: Install docker-compose
@@ -56,6 +59,11 @@
     - name: Make docker-compose executable
       become_user: root
       file: dest=/usr/local/bin/docker-compose mode=a+x
+    - name: Add docker-compose to path
+      become_user: root
+      shell: >
+        ln -s /usr/local/bin/docker-compose /usr/bin/docker-compose
+        creates=/usr/bin/docker-compose
     - name: Install nvm
       shell: >
         curl https://raw.githubusercontent.com/creationix/nvm/v{{ nvm_version }}/install.sh | sh
@@ -70,6 +78,26 @@
          . ~/.bashrc && npm install -g composer-cli@{{ composer_version }}
          creates=~/.nvm/versions/node/v{{ node_version }}/bin/composer
     - name: Start fabric containers
-      command: cd ~/fabric-tools && ./startFabric.sh
+      shell: >
+        cd ~/fabric-tools && ./startFabric.sh
+      args:
+        executable: /bin/bash
     - name: Create and import PeerAdmin card
-      command: cd ~/fabric-tools && ./createPeerAdminCard.sh
+      shell: >
+        cd ~/fabric-tools && ./createPeerAdminCard.sh
+        creates=~/.composer/cards/PeerAdmin@hlfv1/connection.json
+      args:
+        executable: /bin/bash
+      environment:
+        PATH: "{{ ansible_env.PATH }}:/home/{{ server_user }}/.nvm/versions/node/v{{ node_version }}/bin"
+    - name: Docker needs to start on reboot
+      become_user: root
+      lineinfile: dest=/etc/rc.local line='service docker start' insertafter='EOF' state=present
+    - name: Fabric needs to start on reboot
+      become_user: root
+      lineinfile: dest=/etc/rc.local line='/home/{{ server_user }}/fabric-tools/startFabric.sh' insertafter='EOF' state=present
+    - name: Make rc.local executable
+      become_user: root
+      file:
+        path: /etc/rc.local
+        mode: 0755
