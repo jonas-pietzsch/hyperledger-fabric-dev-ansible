@@ -101,3 +101,12 @@
       file:
         path: /etc/rc.local
         mode: 0755
+    - name: Synchronize PeerAdmin@hlfv1 card
+      synchronize:
+        src: /home/{{ server_user }}/.composer/cards/PeerAdmin@hlfv1/
+        dest: ~/.composer/cards/PeerAdmin@fabric-dev/
+        recursive: yes
+        mode: pull
+
+    # Execute on local machine afterwards:
+    # sed -i -e 's/localhost/the-remote-public-host/g' ~/.composer/cards/PeerAdmin@fabric-dev/connection.json
