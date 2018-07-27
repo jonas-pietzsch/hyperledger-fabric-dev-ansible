@@ -33,9 +33,8 @@
         name: "{{ server_user }}"
         groups: docker
         append: yes
-      notify:
-        - Kill own ssh connections
     - name: Start docker
+      become_user: root
       service:
         name: docker
         state: started
@@ -101,11 +100,22 @@
       file:
         path: /etc/rc.local
         mode: 0755
-    - name: Synchronize PeerAdmin@hlfv1 card
+    - name: Synchronize PeerAdmin@hlfv1 card from .composer config
       synchronize:
         src: /home/{{ server_user }}/.composer/cards/PeerAdmin@hlfv1/
         dest: ~/.composer/cards/PeerAdmin@fabric-dev/
         recursive: yes
+        mode: pull
+    - name: Export PeerAdmin@hlfv1 card on machine
+      shell: >
+        composer card export --card PeerAdmin@hlfv1 --file ~/peer-admin.card
+        creates=~/peer-admin.card
+      environment:
+        PATH: "{{ ansible_env.PATH }}:/home/{{ server_user }}/.nvm/versions/node/v{{ node_version }}/bin"
+    - name: Synchronize exported PeerAdmin@hlfv1 card as file to local working directory
+      synchronize:
+        src: /home/{{ server_user }}/peer-admin.card
+        dest: peer-admin.card
         mode: pull
 
     # Execute on local machine afterwards:
