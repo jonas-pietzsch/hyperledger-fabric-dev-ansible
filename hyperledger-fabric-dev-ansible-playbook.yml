@@ -100,6 +100,7 @@
       file:
         path: /etc/rc.local
         mode: 0755
+    # TODO: do the connection.json localhost search and replace on /home/{{ server_user }}/.composer/cards/PeerAdmin@hlfv1/connection.json before the sync
     - name: Synchronize PeerAdmin@hlfv1 card from .composer config
       synchronize:
         src: /home/{{ server_user }}/.composer/cards/PeerAdmin@hlfv1/
