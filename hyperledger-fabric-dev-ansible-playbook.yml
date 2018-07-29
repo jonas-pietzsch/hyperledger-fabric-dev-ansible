@@ -100,10 +100,14 @@
       file:
         path: /etc/rc.local
         mode: 0755
-    # TODO: do the connection.json localhost search and replace on /home/{{ server_user }}/.composer/cards/PeerAdmin@hlfv1/connection.json before the sync
+    - name: Replace hostnames in PeerAdmin cards connection.json
+      replace:
+        path: ~/.composer/cards/PeerAdmin@hlfv1/connection.json
+        regexp: 'localhost'
+        replace: '{{ ansible_default_ipv4.address }}'
     - name: Synchronize PeerAdmin@hlfv1 card from .composer config
       synchronize:
-        src: /home/{{ server_user }}/.composer/cards/PeerAdmin@hlfv1/
+        src: ~/.composer/cards/PeerAdmin@hlfv1/
         dest: ~/.composer/cards/PeerAdmin@fabric-dev/
         recursive: yes
         mode: pull
@@ -115,9 +119,6 @@
         PATH: "{{ ansible_env.PATH }}:/home/{{ server_user }}/.nvm/versions/node/v{{ node_version }}/bin"
     - name: Synchronize exported PeerAdmin@hlfv1 card as file to local working directory
       synchronize:
-        src: /home/{{ server_user }}/peer-admin.card
+        src: ~/peer-admin.card
         dest: peer-admin.card
         mode: pull
-
-    # Execute on local machine afterwards:
-    # sed -i -e 's/localhost/the-remote-public-host/g' ~/.composer/cards/PeerAdmin@fabric-dev/connection.json
