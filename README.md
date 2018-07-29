@@ -4,11 +4,13 @@ This Ansible playbook was written to create simple Hyperledger Fabric networks f
 
 ### Usage
 
-Make sure you have [Ansible installed](https://docs.ansible.com/ansible/latest/installation_guide/intro_installation.html).
+#### Prerequisite
+
+Make sure you have [Ansible](https://docs.ansible.com/ansible/latest/installation_guide/intro_installation.html) and [composer-cli](https://hyperledger.github.io/composer/latest/) installed.
 
 #### Server and SSH access
 
-First, create yourself a virtual server somewhere (e.g. AWS). Ensure to have key based SSH access to it, for example by configuration in `~/.ssh/config`:
+First, create yourself a virtual server somewhere (e.g. AWS EC2). Ensure to have key based SSH access to it, for example by configuration in `~/.ssh/config`:
 
 ```
 Host my-host
@@ -16,6 +18,18 @@ Host my-host
     User ec2-user
     IdentityFile ~/.ssh/keypairs/my-keypair.pem
 ```
+
+#### Inbound traffic
+
+Make sure to allow inbound traffic to the server (e.g. via a AWS Security Group) to the following ports:
+
+* 8080 – Composer Playground
+* 7054 – ca.org1
+* 7051 and 7053 – peer0.org1
+* 7050 – Orderer
+* SSH port of your choice
+* Maybe additional ones for different [composer-rest-server](https://hyperledger.github.io/composer/latest/integrating/integrating-index) instances
+
 
 #### Setup and configuration
 
@@ -25,4 +39,8 @@ Host my-host
 
 ### Provision the server
 
+Let's go:
+
 `ansible-playbook -i ./hosts hyperledger-fabric-dev-ansible-playbook.yml`
+
+*Note*: On the first run(s) there can be an issue with task `Download fabric docker images by script`. It may complain about your user not having sufficient rights for Docker although the user has been added to the `docker` group before. **Just run it again**. If is takes too long, you can also consider to login manually and execute `~/fabric-tools/downloadFabric.sh`.
