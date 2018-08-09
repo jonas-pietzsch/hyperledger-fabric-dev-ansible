@@ -1,0 +1,12 @@
+---
+- hosts: all
+  vars_files:
+    - variables.yml
+  become: yes
+  become_user: "{{ server_user }}"
+  roles:
+    - docker
+    - prereqs
+    - fabric-dev-server
+    - reboot
+    - composer-cards

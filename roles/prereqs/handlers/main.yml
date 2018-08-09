@@ -1,0 +1,7 @@
+---
+- name: Start docker
+  become_user: root
+  service:
+    name: docker
+    state: started
+    enabled: true

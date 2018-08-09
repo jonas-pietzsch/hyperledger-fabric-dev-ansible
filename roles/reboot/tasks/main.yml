@@ -1,0 +1,33 @@
+---
+- name: Create /etc/rc.local if not already existing
+  copy:
+    content: "#!/usr/bin/env bash"
+    dest: /etc/rc.local
+    force: no
+
+- name: Fabric needs to start on reboot
+  become_user: root
+  lineinfile: dest=/etc/rc.local line='/home/{{ server_user }}/fabric-tools/startFabric.sh' insertafter='EOF' state=present
+
+- name: Make rc.local executable
+  become_user: root
+  file:
+    path: /etc/rc.local
+    mode: 0755
+
+- name: composer-playground needs to start on reboot
+  become_user: root
+  become: yes
+  lineinfile: dest=/etc/rc.local line='docker run -d --name {{ playground_container_name }} -p 8080:8080 -v ~/.composer:/home/composer/.composer hyperledger/composer-playground:{{ composer_version }}' insertafter='EOF' state=present
+
+- name: Start fabric containers
+  shell: >
+    cd ~/fabric-tools && ./startFabric.sh && touch ~/fabric-started
+    creates=~/fabric-started
+  args:
+    executable: /bin/bash
+
+- name: Run composer-playground docker image
+  shell: >
+    docker run -d --name {{ playground_container_name }} -p 8080:8080 -v ~/.composer:/home/composer/.composer hyperledger/composer-playground:{{ composer_version }} && echo "playground-started" > ~/playground-started
+    creates=~/playground-started

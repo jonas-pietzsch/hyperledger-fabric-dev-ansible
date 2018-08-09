@@ -1,0 +1,34 @@
+---
+- name: Create and import PeerAdmin card
+  become_user: "{{ server_user }}"
+  shell: >
+    cd ~/fabric-tools && ./createPeerAdminCard.sh
+    creates=~/.composer/cards/PeerAdmin@hlfv1/connection.json
+  environment:
+    PATH: "{{ ansible_env.PATH }}:/home/{{ server_user }}/.nvm/versions/node/v{{ node_version }}/bin"
+
+- name: Replace hostnames in PeerAdmin cards connection.json
+  replace:
+    path: ~/.composer/cards/PeerAdmin@hlfv1/connection.json
+    regexp: 'localhost'
+    replace: '{{ public_ip_address }}'
+
+- name: Synchronize PeerAdmin@hlfv1 card from .composer config
+  synchronize:
+    src: ~/.composer/cards/PeerAdmin@hlfv1/
+    dest: ~/.composer/cards/PeerAdmin@fabric-dev/
+    recursive: yes
+    mode: pull
+
+- name: Export PeerAdmin@hlfv1 card on machine
+  shell: >
+    composer card export --card PeerAdmin@hlfv1 --file ~/peer-admin.card
+    creates=~/peer-admin.card
+  environment:
+    PATH: "{{ ansible_env.PATH }}:/home/{{ server_user }}/.nvm/versions/node/v{{ node_version }}/bin"
+
+- name: Synchronize exported PeerAdmin@hlfv1 card as file to local working directory
+  synchronize:
+    src: ~/peer-admin.card
+    dest: peer-admin.card
+    mode: pull

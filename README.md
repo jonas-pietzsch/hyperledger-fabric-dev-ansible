@@ -52,6 +52,6 @@ Make sure to allow inbound traffic to the server (e.g. via a AWS Security Group)
 
 Let's go:
 
-`ansible-playbook -i ./hosts hyperledger-fabric-dev-ansible-playbook.yml`
+`ansible-playbook -i ./hosts playbook.yml`
 
 *Note*: On the first run(s) there can be an issue with task `Download fabric docker images by script`. It may complain about your user not having sufficient rights for Docker although the user has been added to the `docker` group before. **Just run it again**. If is takes too long, you can also consider to login manually and execute `~/fabric-tools/downloadFabric.sh`.
