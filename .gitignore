@@ -1,3 +1,10 @@
+# Ansible
 *.retry
 hosts
+
+# HL Composer
 *.card
+
+# Vagrant
+*.log
+.vagrant/
