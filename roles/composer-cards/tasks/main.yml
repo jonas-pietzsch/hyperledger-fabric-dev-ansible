@@ -1,10 +1,9 @@
 ---
 - name: Create and import PeerAdmin card
+  become_user: "{{ server_user }}"
   shell: >
     cd ~/fabric-tools && ./createPeerAdminCard.sh
     creates=~/.composer/cards/PeerAdmin@hlfv1/connection.json
-  args:
-    executable: /bin/bash
   environment:
     PATH: "{{ ansible_env.PATH }}:/home/{{ server_user }}/.nvm/versions/node/v{{ node_version }}/bin"
 
@@ -12,7 +11,7 @@
   replace:
     path: ~/.composer/cards/PeerAdmin@hlfv1/connection.json
     regexp: 'localhost'
-    replace: '{{ ansible_default_ipv4.address }}'
+    replace: '{{ public_ip_address }}'
 
 - name: Synchronize PeerAdmin@hlfv1 card from .composer config
   synchronize:

@@ -5,8 +5,8 @@
   become: yes
   become_user: "{{ server_user }}"
   roles:
+    - docker
     - prereqs
     - fabric-dev-server
-    - composer-cards
-    - composer-playground
     - reboot
+    - composer-cards

@@ -5,6 +5,9 @@
 - name: Adding the path in the bashrc files
   lineinfile: dest=~/.bashrc line='export FABRIC_VERSION={{ hyperledger_fabric_version }}' insertafter='EOF' state=present
 
+- name: Setting lang
+  lineinfile: dest=~/.bashrc line='export LC_ALL=C' insertafter='EOF' state=present
+
 - name: Configure globally which FABRIC_VERSION to use
   shell: >
     . ~/.bashrc && echo $FABRIC_VERSION

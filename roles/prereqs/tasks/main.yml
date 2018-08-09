@@ -1,23 +1,13 @@
 ---
-- name: Install docker, make and requirements for nodeJs
+- name: Install Git and requirements for NVM/Node
   become_user: root
-  yum: pkg={{item}} state=installed
+  package: pkg={{item}} state=present
   with_items:
-    - docker
-    - make
-    - glibc-devel
-    - gcc
-    - patch
-    - gcc-c++
-  notify:
-    - start docker
-
-- name: Append the docker group to {{ server_user }} so it can use docker
-  become_user: root
-  user:
-    name: "{{ server_user }}"
-    groups: docker
-    append: yes
+    - build-essential
+    - libssl-dev
+    - git
+    - python-minimal
+    - unzip
 
 - name: Install docker-compose
   become_user: root
@@ -48,6 +38,12 @@
     warn=False
 
 - name: Install composer-cli globally
+  become_user: "{{ server_user }}"
   shell: >
       . ~/.bashrc && npm install -g composer-cli@{{ composer_version }}
       creates=~/.nvm/versions/node/v{{ node_version }}/bin/composer
+  environment:
+    PATH: "{{ ansible_env.PATH }}:/home/{{ server_user }}/.nvm/versions/node/v{{ node_version }}/bin"
+
+- name: Create .composer folder
+  file: path=~/.composer state=directory
