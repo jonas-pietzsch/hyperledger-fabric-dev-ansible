@@ -1,0 +1,16 @@
+---
+# - name: Create directory for composer-playground related files
+#   file: path=~/playground state=directory
+
+# - name: Create composer-playground Dockerfile
+#   shell: >
+#     echo "FROM hyperledger/composer-playground:{{ composer_version }}" > ~/playground/Dockerfile
+#     creates=~/playground/Dockerfile
+
+# - name: Build composer-playground docker image
+#   shell: >
+#     docker build -t {{ playground_image_tag }} .
+
+# - name: Run composer-playground docker image
+#   shell: >
+#     docker run -d --name {{ playground_container_name }} -p 8080:8080 -v ~/.composer:/home/composer/.composer {{ playground_image_tag }}

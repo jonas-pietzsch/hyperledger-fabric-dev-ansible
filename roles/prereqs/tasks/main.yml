@@ -1,0 +1,53 @@
+---
+- name: Install docker, make and requirements for nodeJs
+  become_user: root
+  yum: pkg={{item}} state=installed
+  with_items:
+    - docker
+    - make
+    - glibc-devel
+    - gcc
+    - patch
+    - gcc-c++
+  notify:
+    - start docker
+
+- name: Append the docker group to {{ server_user }} so it can use docker
+  become_user: root
+  user:
+    name: "{{ server_user }}"
+    groups: docker
+    append: yes
+
+- name: Install docker-compose
+  become_user: root
+  get_url:
+    url: "https://github.com/docker/compose/releases/download/{{ docker_compose_version }}/docker-compose-Linux-x86_64"
+    dest: /usr/local/bin/docker-compose
+    mode: 0755
+
+- name: Make docker-compose executable
+  become_user: root
+  file: dest=/usr/local/bin/docker-compose mode=a+x
+
+- name: Add docker-compose to path
+  become_user: root
+  shell: >
+    ln -s /usr/local/bin/docker-compose /usr/bin/docker-compose
+    creates=/usr/bin/docker-compose
+
+- name: Install nvm
+  shell: >
+    curl https://raw.githubusercontent.com/creationix/nvm/v{{ nvm_version }}/install.sh | sh
+    creates=~/.nvm/nvm.sh
+
+- name: Install node and set version
+  shell: >
+    /bin/bash -c "source ~/.nvm/nvm.sh && nvm install v{{ node_version }} && nvm alias default v{{ node_version }}"
+    creates=~/.nvm/alias
+    warn=False
+
+- name: Install composer-cli globally
+  shell: >
+      . ~/.bashrc && npm install -g composer-cli@{{ composer_version }}
+      creates=~/.nvm/versions/node/v{{ node_version }}/bin/composer
