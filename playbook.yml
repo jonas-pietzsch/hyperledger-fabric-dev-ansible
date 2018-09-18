@@ -3,6 +3,8 @@
   vars_files:
     - variables.yml
   become: yes
+  environment:
+    FABRIC_VERSION: "{{ hyperledger_fabric_version }}"
   become_user: "{{ server_user }}"
   roles:
     - docker

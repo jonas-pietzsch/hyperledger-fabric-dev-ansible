@@ -8,6 +8,9 @@
     - git
     - python-minimal
     - unzip
+    - ntp
+  notify:
+    - start ntp
 
 - name: Install docker-compose
   become_user: root
