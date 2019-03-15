@@ -29,9 +29,14 @@
     ln -s /usr/local/bin/docker-compose /usr/bin/docker-compose
     creates=/usr/bin/docker-compose
 
+- name: Download NVM
+  get_url:
+    url: https://raw.githubusercontent.com/creationix/nvm/v{{ nvm_version }}/install.sh
+    dest: ~/install-nvm.sh
+
 - name: Install nvm
   shell: >
-    curl https://raw.githubusercontent.com/creationix/nvm/v{{ nvm_version }}/install.sh | sh
+    sh ~/install-nvm.sh  
     creates=~/.nvm/nvm.sh
 
 - name: Install node and set version

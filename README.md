@@ -8,13 +8,10 @@ This Ansible playbook was written to create simple Hyperledger Fabric networks f
 
 Make sure you have [Ansible](https://docs.ansible.com/ansible/latest/installation_guide/intro_installation.html) and [composer-cli](https://hyperledger.github.io/composer/latest/) installed.
 
-If you just want to test this setup, feel free to use Vagrant. This repository comes with a suitable `Vagrantfile`, start the machine using `vagrant up`. Once started, run `vagrant ssh` to connect to the machine initially. Then add a host definition to `~/.ssh/config`:
+If you just want to test this setup, feel free to use Vagrant. This repository comes with a suitable `Vagrantfile`, start the machine using `vagrant up`. Once started, run `vagrant ssh` to connect to the machine initially. Then append the machines ssh-config to `~/.ssh/config` if you like:
 
 ```bash
-Host ubuntu-vagrant
-    Hostname 127.0.0.1
-    Port 2222
-    User vagrant
+vagrant ssh-config >> ~/.ssh/config
 ```
 
 You should now be able to run `ssh ubuntu-vagrant`. `ubuntu-vagrant` now is the host you can use in the hosts-file (skip the sections of this tutorial until you get to "Setup and configuration"). The public IP, available from your host machine, will be `192.168.50.4`.
